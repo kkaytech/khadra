@@ -5,124 +5,259 @@ import { buildings, apartments } from "./mockData";
 export default function Home() {
   const [buildingId, setBuildingId] = useState(buildings[0].id);
   const [apartment, setApartment] = useState("");
-  const [step, setStep] = useState<"onboarding" | "meter">("onboarding");
-
+  const [step, setStep] = useState<"onboarding" | "meter" | "results">("onboarding");
   const [meterData, setMeterData] = useState({ electricity: "", water: "" });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Find the user's previous readings, or default values
-  const prevApartment = apartments.find(
+  const currentBuilding = buildings.find(b => b.id === buildingId);
+  const userApartment = apartments.find(
     (a) => a.number === apartment && a.buildingId === buildingId
   );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setStep("meter");
-    // You can store user's info in state/context here for later use
   };
 
-  const handleMeterSubmit = (e: React.FormEvent) => {
+  const handleMeterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, you'd update leaderboard/mocks here
-    alert(
-      `Meter Reading Submitted!\nElectricity: ${meterData.electricity}\nWater: ${meterData.water}`
-    );
-    // Proceed to leaderboard or results screen
+    setIsSubmitting(true);
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    setIsSubmitting(false);
+    setStep("results");
   };
+
+  const calculateSavings = () => {
+    if (!userApartment) return { energy: 0, water: 0, rank: 0 };
+    
+    const energyUsed = parseInt(meterData.electricity) - userApartment.lastReading.electricity;
+    const prevEnergy = userApartment.lastReading.electricity;
+    const energySavings = prevEnergy > 0 ? ((prevEnergy - energyUsed) / prevEnergy) * 100 : 0;
+    
+    return {
+      energy: Math.max(0, Math.round(energySavings)),
+      water: 12, // Mock data for demo
+      rank: 3, // Mock rank
+      totalApartments: 45
+    };
+  };
+
+  const savings = calculateSavings();
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-green-50">
-      {step === "onboarding" ? (
-        <form
-          className="bg-white p-8 rounded shadow-md flex flex-col gap-4 w-full max-w-sm"
-          onSubmit={handleSubmit}
-        >
-          <h1 className="text-2xl font-bold text-green-700 mb-4">
-            Khadra Onboarding
-          </h1>
-          <label>
-            Choose Building:
-            <select
-              className="block w-full mt-1 p-2 border rounded"
-              value={buildingId}
-              onChange={(e) => setBuildingId(Number(e.target.value))}
-            >
-              {buildings.map((b) => (
-                <option key={b.id} value={b.id}>
-                  {b.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Apartment Number:
-            <input
-              type="text"
-              className="block w-full mt-1 p-2 border rounded"
-              value={apartment}
-              onChange={(e) => setApartment(e.target.value)}
-              placeholder="e.g., 1001"
-              required
-            />
-          </label>
-          <button
-            type="submit"
-            className="bg-green-700 text-white px-4 py-2 rounded"
-          >
-            Next
-          </button>
-        </form>
-      ) : (
-        <form
-          className="bg-white p-8 rounded shadow-md flex flex-col gap-4 w-full max-w-sm"
-          onSubmit={handleMeterSubmit}
-        >
-          <h1 className="text-2xl font-bold text-green-700 mb-4">
-            Submit Meter Readings
-          </h1>
-          <label>
-            Electricity Meter:
-            <input
-              type="number"
-              className="block w-full mt-1 p-2 border rounded"
-              value={meterData.electricity}
-              onChange={(e) =>
-                setMeterData((d) => ({
-                  ...d,
-                  electricity: e.target.value,
-                }))
-              }
-              placeholder={
-                prevApartment?.lastReading.electricity?.toString() || "Previous"
-              }
-              required
-            />
-          </label>
-          <label>
-            Water Meter:
-            <input
-              type="number"
-              className="block w-full mt-1 p-2 border rounded"
-              value={meterData.water}
-              onChange={(e) =>
-                setMeterData((d) => ({
-                  ...d,
-                  water: e.target.value,
-                }))
-              }
-              placeholder={
-                prevApartment?.lastReading.water?.toString() || "Previous"
-              }
-              required
-            />
-          </label>
-          <button
-            type="submit"
-            className="bg-green-700 text-white px-4 py-2 rounded"
-          >
-            Submit
-          </button>
-        </form>
-      )}
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Progress Indicator */}
+        <div className="flex justify-center mb-8">
+          <div className="flex items-center space-x-4">
+            {["onboarding", "meter", "results"].map((s, index) => (
+              <div key={s} className="flex items-center">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                  step === s ? 'bg-green-600 text-white' : 
+                  index < ["onboarding", "meter", "results"].indexOf(step) ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-700'
+                }`}>
+                  {index + 1}
+                </div>
+                {index < 2 && (
+                  <div className={`w-12 h-1 ${index < ["onboarding", "meter", "results"].indexOf(step) ? 'bg-green-500' : 'bg-gray-300'}`} />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Card Container */}
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          {step === "onboarding" && (
+            <form onSubmit={handleSubmit} className="p-8">
+              <div className="text-center mb-8">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl">🌿</span>
+                </div>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">Khadra</h1>
+                <p className="text-gray-700">Join your building's sustainability challenge</p>
+              </div>
+
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-800 mb-2">
+                    Select Your Building
+                  </label>
+                  <select
+                    value={buildingId}
+                    onChange={(e) => setBuildingId(Number(e.target.value))}
+                    className="w-full px-4 py-3 border border-gray-500 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-gray-500"
+                  >
+                    {buildings.map((b) => (
+                      <option key={b.id} value={b.id}>
+                        {b.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-800 mb-2">
+                    Apartment Number
+                  </label>
+                  <input
+                    type="text"
+                    value={apartment}
+                    onChange={(e) => setApartment(e.target.value)}
+                    placeholder="e.g., 1001"
+                    required
+                    className="w-full px-4 py-3 border border-gray-500 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-gray-800"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200"
+                >
+                  Continue to Meter Reading
+                </button>
+              </div>
+            </form>
+          )}
+
+          {step === "meter" && (
+            <form onSubmit={handleMeterSubmit} className="p-8">
+              <div className="text-center mb-8">
+                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl">⚡</span>
+                </div>
+                <h1 className="text-2xl font-bold text-gray-900 mb-2">Submit Meter Reading</h1>
+                <p className="text-gray-700">Help your building climb the leaderboard</p>
+              </div>
+
+              <div className="space-y-6">
+                <div className="bg-green-50 p-4 rounded-lg">
+                  <h3 className="font-medium text-green-800 mb-2">Your Previous Reading</h3>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-gray-700">Electricity:</span>
+                      <div className="font-mono text-lg font-bold text-green-700">
+                        {userApartment?.lastReading.electricity.toLocaleString()} kWh
+                      </div>
+                    </div>
+                    <div>
+                      <span className="text-gray-700">Water:</span>
+                      <div className="font-mono text-lg font-bold text-blue-700">
+                        {userApartment?.lastReading.water.toLocaleString()} L
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-800 mb-2">
+                      Current Electricity (kWh)
+                    </label>
+                    <input
+                      type="number"
+                      value={meterData.electricity}
+                      onChange={(e) => setMeterData(d => ({ ...d, electricity: e.target.value }))}
+                      placeholder="Enter current reading"
+                      required
+                      min={userApartment?.lastReading.electricity}
+                      className="w-full px-4 py-3 border border-gray-800 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all font-mono text-gray-800"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-800 mb-2">
+                      Current Water (Liters)
+                    </label>
+                    <input
+                      type="number"
+                      value={meterData.water}
+                      onChange={(e) => setMeterData(d => ({ ...d, water: e.target.value }))}
+                      placeholder="Enter current reading"
+                      required
+                      min={userApartment?.lastReading.water}
+                      className="w-full px-4 py-3 border border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all font-mono text-gray-800"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                      Calculating Savings...
+                    </>
+                  ) : (
+                    'Submit Reading & See Ranking'
+                  )}
+                </button>
+              </div>
+            </form>
+          )}
+
+          {step === "results" && (
+            <div className="p-8">
+              <div className="text-center mb-8">
+                <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl">🏆</span>
+                </div>
+                <h1 className="text-2xl font-bold text-gray-900 mb-2">Great Job!</h1>
+                <p className="text-gray-700">You're helping {currentBuilding?.name} save energy</p>
+              </div>
+
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-green-50 p-4 rounded-lg text-center">
+                    <div className="text-2xl font-bold text-green-700">{savings.energy}%</div>
+                    <div className="text-sm text-gray-700">Energy Saved</div>
+                  </div>
+                  <div className="bg-blue-50 p-4 rounded-lg text-center">
+                    <div className="text-2xl font-bold text-blue-700">{savings.water}%</div>
+                    <div className="text-sm text-gray-700">Water Saved</div>
+                  </div>
+                </div>
+
+                <div className="bg-purple-50 p-4 rounded-lg text-center">
+                  <div className="text-2xl font-bold text-purple-700">#{savings.rank}</div>
+                  <div className="text-sm text-gray-700">
+                    Rank in {currentBuilding?.name} (of {savings.totalApartments})
+                  </div>
+                </div>
+
+                <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
+                  <h3 className="font-medium text-yellow-800 mb-1">Community Reward Unlocked! 🎉</h3>
+                  <p className="text-sm text-yellow-700">
+                    Your building is 80% to unlocking 20% off at the community cafe
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => {
+                    // Navigate to leaderboard or restart
+                    setStep("onboarding");
+                    setMeterData({ electricity: "", water: "" });
+                  }}
+                  className="w-full bg-gray-900 hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200"
+                >
+                  View Full Leaderboard
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Demo Note */}
+        <div className="text-center mt-6 text-sm text-gray-600">
+          <p>Khadra - Building Sustainability Platform</p>
+        </div>
+      </div>
     </div>
   );
 }
