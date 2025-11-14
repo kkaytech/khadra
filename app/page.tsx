@@ -1,11 +1,12 @@
 "use client";
 import { useState } from "react";
 import { buildings, apartments } from "./mockData";
+import Leaderboard from "./leaderboard";
 
 export default function Home() {
   const [buildingId, setBuildingId] = useState(buildings[0].id);
   const [apartment, setApartment] = useState("");
-  const [step, setStep] = useState<"onboarding" | "meter" | "results">("onboarding");
+  const [step, setStep] = useState<"onboarding" | "meter" | "results" | "leaderboard">("onboarding");
   const [meterData, setMeterData] = useState({ electricity: "", water: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -39,13 +40,24 @@ export default function Home() {
     
     return {
       energy: Math.max(0, Math.round(energySavings)),
-      water: 12, // Mock data for demo
-      rank: 3, // Mock rank
+      water: 12,
+      rank: 3,
       totalApartments: 45
     };
   };
 
   const savings = calculateSavings();
+
+  // Show leaderboard if on that step
+  if (step === "leaderboard") {
+    return (
+      <Leaderboard
+        buildingId={buildingId}
+        apartment={apartment}
+        onBack={() => setStep("results")}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center p-4">
@@ -239,11 +251,7 @@ export default function Home() {
                 </div>
 
                 <button
-                  onClick={() => {
-                    // Navigate to leaderboard or restart
-                    setStep("onboarding");
-                    setMeterData({ electricity: "", water: "" });
-                  }}
+                  onClick={() => setStep("leaderboard")}
                   className="w-full bg-gray-900 hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200"
                 >
                   View Full Leaderboard
