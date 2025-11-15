@@ -2,6 +2,10 @@
 import { useState } from "react";
 import { buildings, apartments } from "./mockData";
 import Leaderboard from "./leaderboard";
+import Link from "next/link";
+
+
+
 
 export default function Home() {
   const [buildingId, setBuildingId] = useState(buildings[0].id);
@@ -256,6 +260,12 @@ export default function Home() {
                 >
                   View Full Leaderboard
                 </button>
+                {<Link
+                href="/rewards"
+                className="w-full block mt-3 bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 text-center"
+                >
+                View Community Rewards
+                </Link>}
               </div>
             </div>
           )}
