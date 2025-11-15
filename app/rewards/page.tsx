@@ -3,12 +3,13 @@
 import { rewards, buildingGoals } from "../mockData";
 import { useState } from "react";
 
+
 // Optional: Accept buildingId and userRank as props or context for a multi-building app
 const buildingId = 1; // Hardcode or take from user state/context
 
 export default function RewardsPage() {
   // Simulate progress for current building
-  const goal = buildingGoals.find(g => g.buildingId === buildingId);
+  const goal = buildingGoals.find((g: any) => g.buildingId === buildingId);
   const progress = goal ? goal.currentReduction : 0;
 
   // Example: reward "unlocks" if building progress meets the unlockAt percentage

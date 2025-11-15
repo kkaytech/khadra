@@ -1,12 +1,11 @@
 "use client";
 
-import { leaderboard, buildingGoals, rewards } from "./mockData";
+import { apartments, buildingGoals, rewards } from "./mockData";
 import {
   calculatePersonalSavingsRate,
   calculateNormalizedUsage,
   calculateBuildingComparisonScore,
-  calculateDiscountPercentage,
-  generateAIInsights
+  calculateDiscountPercentage
 } from "./lib/aiEngine";
 
 interface LeaderboardProps {
@@ -20,17 +19,75 @@ export default function Leaderboard({
   apartment,
   onBack,
 }: LeaderboardProps) {
-  // Filter leaderboard for selected building
-  const buildingLeaderboard = leaderboard.filter(
-    (entry) => entry.buildingId === buildingId
+  // Filter apartments for the selected building
+  const buildingApartments = apartments.filter(
+    (entry: any) => entry.buildingId === buildingId
   );
 
-  // Find user's entry
-  const userEntry = buildingLeaderboard.find((e) => e.number === apartment);
-  const userRank = userEntry?.rank || buildingLeaderboard.length + 1;
+  // Helper: calculate current month electricity consumption
+  const getConsumption = (apt: any) => {
+    if (apt.previousMonths && apt.previousMonths.length > 0) {
+      // Use the most recent previous month as demo current consumption
+      return apt.previousMonths[0].electricity;
+    }
+    return 0;
+  };
 
-  // Get building goal
-  const goal = buildingGoals.find((g) => g.buildingId === buildingId);
+  // Prepare entries with consumption
+  const leaderboardEntries = buildingApartments.map((apt: any) => ({
+    ...apt,
+    consumption: getConsumption(apt)
+  }));
+
+  // Sort apartments by consumption ascending (lowest usage = best)
+  const sortedLeaderboard = leaderboardEntries.sort(
+    (a: any, b: any) => a.consumption - b.consumption
+  );
+
+  // Assign ranks and compute discounts using the AI engine
+  const leaderboardWithRankAndDiscount = sortedLeaderboard.map((apt: any, idx: number) => {
+    // Prepare userData for AI engine
+    const userData = {
+      householdSize: apt.householdSize,
+      apartmentSqft: apt.apartmentSqft,
+      hasElderly: apt.hasElderly,
+      hasChildren: apt.hasChildren,
+      prevMonth1ElecKwh: apt.previousMonths?.[0]?.electricity ?? apt.consumption,
+      prevMonth2ElecKwh: apt.previousMonths?.[1]?.electricity ?? apt.consumption,
+      prevMonth3ElecKwh: apt.previousMonths?.[2]?.electricity ?? apt.consumption,
+      currentMonthUsage: apt.consumption
+    };
+
+    const personalSavingsRate = calculatePersonalSavingsRate(userData);
+    const userNormalized = calculateNormalizedUsage(
+      apt.consumption,
+      userData.householdSize,
+      userData.apartmentSqft,
+      userData.hasElderly,
+      userData.hasChildren
+    );
+    const buildingAvgNormalized =
+      leaderboardEntries.reduce((sum: number, a: any) => sum + a.consumption, 0) /
+      leaderboardEntries.length;
+    const buildingPercentile = calculateBuildingComparisonScore(
+      userNormalized,
+      buildingAvgNormalized
+    );
+    const discount = calculateDiscountPercentage(personalSavingsRate, buildingPercentile);
+
+    return {
+      ...apt,
+      rank: idx + 1,
+      discount
+    };
+  });
+
+  // Find user's current entry
+  const userEntry = leaderboardWithRankAndDiscount.find((e: any) => e.number === apartment) || {};
+  const userRank = userEntry.rank || leaderboardWithRankAndDiscount.length + 1;
+
+  // Get building goal info
+  const goal = buildingGoals.find((g: any) => g.buildingId === buildingId);
   const progressPercentage = goal
     ? (goal.currentReduction / goal.targetReduction) * 100
     : 0;
@@ -57,16 +114,17 @@ export default function Leaderboard({
                 <p className="text-sm text-gray-700 mb-1">Your Rank</p>
                 <div className="flex items-center gap-3">
                   <span className="text-4xl font-bold text-green-700">#{userRank}</span>
-                  <span className="text-lg text-gray-600">out of {buildingLeaderboard.length}</span>
+                  <span className="text-lg text-gray-600">out of {leaderboardWithRankAndDiscount.length}</span>
                 </div>
+                {userEntry && (
+                  <p className="mt-3 text-sm text-gray-700">
+                    You used <span className="font-bold">{userEntry.consumption} kWh</span> this month<br />
+                    Your AI Discount: <span className="text-green-700 font-bold">{userEntry.discount}%</span>
+                  </p>
+                )}
               </div>
               <div className="text-5xl">🏆</div>
             </div>
-            {userEntry && (
-              <p className="mt-3 text-sm text-gray-700">
-                You used <span className="font-bold">{userEntry.consumption} kWh</span> this month
-              </p>
-            )}
           </div>
 
           {/* Building Goal Progress */}
@@ -74,7 +132,7 @@ export default function Leaderboard({
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-semibold text-gray-900">Building Reduction Goal</h3>
               <span className="text-sm text-gray-600">
-                {goal?.currentReduction.toFixed(1)}% / {goal?.targetReduction}%
+                {goal?.currentReduction?.toFixed(1)}% / {goal?.targetReduction}%
               </span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
@@ -84,11 +142,10 @@ export default function Leaderboard({
               />
             </div>
             <p className="text-xs text-gray-600 mt-2">
-            {progressPercentage >= 100
-            ? "🎉 Goal achieved! Community rewards unlocked!"
-            : `Keep going! ${((goal?.targetReduction || 5) - (goal?.currentReduction || 0)).toFixed(1)}% more to unlock rewards`}
+              {progressPercentage >= 100
+                ? "🎉 Goal achieved! Community rewards unlocked!"
+                : `Keep going! ${((goal?.targetReduction || 5) - (goal?.currentReduction || 0)).toFixed(1)}% more to unlock rewards`}
             </p>
-
           </div>
         </div>
 
@@ -113,13 +170,15 @@ export default function Leaderboard({
                   <th className="px-6 py-4 text-right text-xs font-medium text-gray-600 uppercase tracking-wider">
                     Usage (kWh)
                   </th>
+                  <th className="px-6 py-4 text-right text-xs font-medium text-gray-600 uppercase tracking-wider">
+                    Discount (%)
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {buildingLeaderboard.map((entry, index) => {
+                {leaderboardWithRankAndDiscount.map((entry: any, index: number) => {
                   const isUser = entry.number === apartment;
                   const rankEmoji = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : "";
-                  
                   return (
                     <tr
                       key={entry.number}
@@ -153,6 +212,11 @@ export default function Leaderboard({
                           {entry.consumption}
                         </span>
                       </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right">
+                        <span className="text-green-700 font-semibold">
+                          {entry.discount.toFixed(2)}
+                        </span>
+                      </td>
                     </tr>
                   );
                 })}
@@ -165,7 +229,7 @@ export default function Leaderboard({
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Available Rewards</h2>
           <div className="grid md:grid-cols-2 gap-4">
-            {rewards.map((reward, index) => (
+            {rewards.map((reward: any, index: number) => (
               <div
                 key={index}
                 className={`p-6 rounded-xl border-2 ${

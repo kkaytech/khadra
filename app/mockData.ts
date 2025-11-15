@@ -84,3 +84,112 @@ export const apartments = [
       { electricity: 480, water: 847 }
     ]
   }]
+  export const buildingGoals = [
+    {
+      buildingId: 1,
+      currentReduction: 4.2,
+      targetReduction: 5.0,
+      participationRate: 72,
+      totalParticipants: 18,
+      rewardPool: 6200
+    },
+    {
+      buildingId: 2,
+      currentReduction: 2.8,
+      targetReduction: 5.0,
+      participationRate: 65,
+      totalParticipants: 15,
+      rewardPool: 5400
+    },
+    {
+      buildingId: 3,
+      currentReduction: 3.5,
+      targetReduction: 5.0,
+      participationRate: 80,
+      totalParticipants: 20,
+      rewardPool: 6800
+    }
+  ];
+
+  export const rewards = [
+    {
+      type: "Community",
+      title: "Utility Bill Discount",
+      description: "5% discount on next month's DEWA bill",
+      unlockAt: 5,
+      category: "utility",
+      icon: "💰"
+    },
+    {
+      type: "Community",
+      title: "Noon Shopping Voucher",
+      description: "AED 25 off on orders above AED 150",
+      unlockAt: 5,
+      category: "shopping",
+      icon: "🛍️"
+    },
+    {
+      type: "Community",
+      title: "Free Laundry Service",
+      description: "One free laundry load (AED 20 value)",
+      unlockAt: 6,
+      category: "service",
+      icon: "🧺"
+    },
+    {
+      type: "Community",
+      title: "Café Discount",
+      description: "Free coffee or snack at building café",
+      unlockAt: 4,
+      category: "food",
+      icon: "☕"
+    },
+    {
+      type: "Top Performer",
+      title: "Premium Parking",
+      description: "Free valet parking for one month",
+      unlockAt: 1,
+      category: "parking",
+      icon: "🚗"
+    },
+    {
+      type: "Community",
+      title: "Grocery Delivery Coupon",
+      description: "AED 30 off on Carrefour or Talabat grocery delivery",
+      unlockAt: 7,
+      category: "grocery",
+      icon: "🛒"
+    },
+    {
+      type: "Top Performer",
+      title: "Free Car Wash",
+      description: "Complimentary car wash service",
+      unlockAt: 2,
+      category: "service",
+      icon: "🚿"
+    },
+    {
+      type: "Community",
+      title: "Gym & Pool Access",
+      description: "Early bird access to community pool or gym",
+      unlockAt: 8,
+      category: "wellness",
+      icon: "🏊"
+    },
+    {
+      type: "Community",
+      title: "Smart Home Raffle",
+      description: "Entry into monthly raffle for smart plugs, bulbs, or meters",
+      unlockAt: 3,
+      category: "tech",
+      icon: "💡"
+    },
+    {
+      type: "Achievement",
+      title: "Green Neighbor Badge",
+      description: "Digital badge + recognition in building newsletter",
+      unlockAt: 1,
+      category: "recognition",
+      icon: "🏆"
+    }
+  ];
