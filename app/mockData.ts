@@ -7,83 +7,236 @@ export const buildings = [
   { id: 3, name: "Sunset Residences" }
 ];
 
-// Enhanced apartment data with household factors
 export const apartments = [
   {
     number: "1001",
     buildingId: 1,
     resident: "Omar",
-    householdSize: 5,
+    householdSize: 3,
     apartmentSqft: 1200,
     hasElderly: false,
     hasChildren: true,
-    lastReading: { electricity: 10250, water: 850 },
+    lastReading: { electricity: 920, water: 800 },
     previousMonths: [
-      { electricity: 798, water: 1581 },
-      { electricity: 711, water: 1614 },
-      { electricity: 795, water: 1401 }
+      { electricity: 980, water: 850 },
+      { electricity: 1050, water: 900 },
+      { electricity: 1120, water: 950 }
     ]
   },
   {
     number: "1002",
     buildingId: 1,
     resident: "Maha",
-    householdSize: 1,
-    apartmentSqft: 2000,
+    householdSize: 2,
+    apartmentSqft: 1000,
     hasElderly: false,
     hasChildren: false,
-    lastReading: { electricity: 10170, water: 900 },
+    lastReading: { electricity: 740, water: 610 },
     previousMonths: [
-      { electricity: 652, water: 703 },
-      { electricity: 522, water: 685 },
-      { electricity: 498, water: 636 }
+      { electricity: 790, water: 650 },
+      { electricity: 840, water: 690 },
+      { electricity: 880, water: 710 }
     ]
   },
   {
     number: "1003",
     buildingId: 1,
     resident: "Fahad",
-    householdSize: 2,
-    apartmentSqft: 2000,
-    hasElderly: false,
-    hasChildren: false,
-    lastReading: { electricity: 10015, water: 760 },
+    householdSize: 4,
+    apartmentSqft: 1800,
+    hasElderly: true,
+    hasChildren: true,
+    lastReading: { electricity: 1120, water: 980 },
     previousMonths: [
-      { electricity: 752, water: 979 },
-      { electricity: 653, water: 911 },
-      { electricity: 565, water: 879 }
+      { electricity: 1170, water: 1040 },
+      { electricity: 1220, water: 1080 },
+      { electricity: 1280, water: 1150 }
     ]
   },
   {
     number: "1004",
     buildingId: 1,
     resident: "Sara",
-    householdSize: 2,
-    apartmentSqft: 1200,
+    householdSize: 1,
+    apartmentSqft: 900,
     hasElderly: false,
     hasChildren: false,
-    lastReading: { electricity: 9850, water: 720 },
+    lastReading: { electricity: 520, water: 405 },
     previousMonths: [
-      { electricity: 555, water: 945 },
-      { electricity: 528, water: 886 },
-      { electricity: 480, water: 847 }
+      { electricity: 556, water: 455 },
+      { electricity: 590, water: 500 },
+      { electricity: 637, water: 539 }
     ]
   },
   {
     number: "1005",
     buildingId: 1,
     resident: "Layla",
-    householdSize: 4,
-    apartmentSqft: 1500,
-    hasElderly: false,
-    hasChildren: false,
-    lastReading: { electricity: 9850, water: 720 },
+    householdSize: 5,
+    apartmentSqft: 2000,
+    hasElderly: true,
+    hasChildren: true,
+    lastReading: { electricity: 1500, water: 1200 },
     previousMonths: [
-      { electricity: 555, water: 945 },
-      { electricity: 528, water: 886 },
-      { electricity: 480, water: 847 }
+      { electricity: 1580, water: 1270 },
+      { electricity: 1640, water: 1320 },
+      { electricity: 1720, water: 1410 }
     ]
-  }]
+  },
+  {
+  number: "2001",
+  buildingId: 2,
+  resident: "Amal",
+  householdSize: 2,
+  apartmentSqft: 1100,
+  hasElderly: false,
+  hasChildren: true,
+  lastReading: { electricity: 930, water: 810 },
+  previousMonths: [
+    { electricity: 990, water: 850 },
+    { electricity: 1050, water: 900 },
+    { electricity: 1110, water: 950 }
+  ]
+},
+{
+  number: "2002",
+  buildingId: 2,
+  resident: "Khalid",
+  householdSize: 3,
+  apartmentSqft: 1000,
+  hasElderly: true,
+  hasChildren: false,
+  lastReading: { electricity: 710, water: 650 },
+  previousMonths: [
+    { electricity: 770, water: 700 },
+    { electricity: 820, water: 730 },
+    { electricity: 875, water: 765 }
+  ]
+},
+{
+  number: "2003",
+  buildingId: 2,
+  resident: "Lina",
+  householdSize: 1,
+  apartmentSqft: 900,
+  hasElderly: false,
+  hasChildren: false,
+  lastReading: { electricity: 600, water: 510 },
+  previousMonths: [
+    { electricity: 640, water: 545 },
+    { electricity: 695, water: 593 },
+    { electricity: 750, water: 636 }
+  ]
+},
+{
+  number: "2004",
+  buildingId: 2,
+  resident: "Nasser",
+  householdSize: 4,
+  apartmentSqft: 1600,
+  hasElderly: true,
+  hasChildren: true,
+  lastReading: { electricity: 1500, water: 1200 },
+  previousMonths: [
+    { electricity: 1550, water: 1270 },
+    { electricity: 1620, water: 1320 },
+    { electricity: 1700, water: 1390 }
+  ]
+},
+{
+  number: "2005",
+  buildingId: 2,
+  resident: "Sami",
+  householdSize: 2,
+  apartmentSqft: 1200,
+  hasElderly: false,
+  hasChildren: false,
+  lastReading: { electricity: 820, water: 730 },
+  previousMonths: [
+    { electricity: 875, water: 770 },
+    { electricity: 940, water: 830 },
+    { electricity: 1000, water: 890 }
+  ]
+},
+
+// Building 3 ("Sunset Residences")
+{
+  number: "3001",
+  buildingId: 3,
+  resident: "Huda",
+  householdSize: 3,
+  apartmentSqft: 1200,
+  hasElderly: true,
+  hasChildren: false,
+  lastReading: { electricity: 960, water: 830 },
+  previousMonths: [
+    { electricity: 1020, water: 890 },
+    { electricity: 1080, water: 930 },
+    { electricity: 1120, water: 980 }
+  ]
+},
+{
+  number: "3002",
+  buildingId: 3,
+  resident: "Yasmine",
+  householdSize: 1,
+  apartmentSqft: 800,
+  hasElderly: false,
+  hasChildren: false,
+  lastReading: { electricity: 520, water: 410 },
+  previousMonths: [
+    { electricity: 565, water: 452 },
+    { electricity: 610, water: 492 },
+    { electricity: 670, water: 545 }
+  ]
+},
+{
+  number: "3003",
+  buildingId: 3,
+  resident: "Ibrahim",
+  householdSize: 5,
+  apartmentSqft: 2000,
+  hasElderly: true,
+  hasChildren: true,
+  lastReading: { electricity: 1570, water: 1280 },
+  previousMonths: [
+    { electricity: 1630, water: 1350 },
+    { electricity: 1700, water: 1400 },
+    { electricity: 1770, water: 1480 }
+  ]
+},
+{
+  number: "3004",
+  buildingId: 3,
+  resident: "Salma",
+  householdSize: 2,
+  apartmentSqft: 1100,
+  hasElderly: false,
+  hasChildren: true,
+  lastReading: { electricity: 780, water: 670 },
+  previousMonths: [
+    { electricity: 830, water: 710 },
+    { electricity: 895, water: 765 },
+    { electricity: 950, water: 809 }
+  ]
+},
+{
+  number: "3005",
+  buildingId: 3,
+  resident: "Majed",
+  householdSize: 4,
+  apartmentSqft: 1800,
+  hasElderly: false,
+  hasChildren: true,
+  lastReading: { electricity: 1250, water: 980 },
+  previousMonths: [
+    { electricity: 1320, water: 1040 },
+    { electricity: 1370, water: 1070 },
+    { electricity: 1430, water: 1130 }
+  ]
+}
+];
+
   export const buildingGoals = [
     {
       buildingId: 1,

@@ -4,9 +4,6 @@ import { buildings, apartments } from "./mockData";
 import Leaderboard from "./leaderboard";
 import Link from "next/link";
 
-
-
-
 export default function Home() {
   const [buildingId, setBuildingId] = useState(buildings[0].id);
   const [apartment, setApartment] = useState("");
@@ -27,37 +24,96 @@ export default function Home() {
   const handleMeterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));
-    
     setIsSubmitting(false);
     setStep("results");
   };
 
   const calculateSavings = () => {
-    if (!userApartment) return { energy: 0, water: 0, rank: 0 };
-    
-    const energyUsed = parseInt(meterData.electricity) - userApartment.lastReading.electricity;
-    const prevEnergy = userApartment.lastReading.electricity;
-    const energySavings = prevEnergy > 0 ? ((prevEnergy - energyUsed) / prevEnergy) * 100 : 0;
-    
+    if (!userApartment) return { energy: 0, water: 0, rank: 0, totalApartments: 0 };
+
+    // User's NEW reading from form input
+    const newElecReading = parseInt(meterData.electricity);
+    const newWaterReading = parseInt(meterData.water);
+
+    // User's PREVIOUS reading (stored in lastReading)
+    const prevElecReading = userApartment.lastReading.electricity;
+    const prevWaterReading = userApartment.lastReading.water;
+
+    // Calculate USAGE for this period (difference between readings)
+    const elecUsedThisPeriod = newElecReading - prevElecReading;
+    const waterUsedThisPeriod = newWaterReading - prevWaterReading;
+
+    // Get the PREVIOUS period's usage from previousMonths[0]
+    const prevPeriodElec = userApartment.previousMonths[0]?.electricity || elecUsedThisPeriod;
+    const prevPeriodWater = userApartment.previousMonths[0]?.water || waterUsedThisPeriod;
+
+    // Calculate SAVINGS % (current usage vs previous period usage)
+    const energySavings = prevPeriodElec > 0 
+      ? ((prevPeriodElec - elecUsedThisPeriod) / prevPeriodElec) * 100 
+      : 0;
+    const waterSavings = prevPeriodWater > 0 
+      ? ((prevPeriodWater - waterUsedThisPeriod) / prevPeriodWater) * 100 
+      : 0;
+
+    // Build leaderboard for ALL apartments in this building
+    const buildingApartments = apartments.filter(
+      (apt: any) => apt.buildingId === userApartment.buildingId
+    );
+
+    const leaderboardData = buildingApartments.map((apt: any) => {
+      // For other apartments, use their stored data
+      // For current user, use their new submission
+      const isCurrentUser = apt.number === userApartment.number;
+      
+      const currentUsage = isCurrentUser 
+        ? elecUsedThisPeriod 
+        : apt.previousMonths[0]?.electricity || 0;
+      
+      const previousUsage = isCurrentUser
+        ? prevPeriodElec
+        : apt.previousMonths[1]?.electricity || currentUsage;
+
+      const savingsPct = previousUsage > 0 
+        ? ((previousUsage - currentUsage) / previousUsage) * 100 
+        : 0;
+
+      return {
+        ...apt,
+        currentUsage,
+        savingsPct: Math.max(0, savingsPct)
+      };
+    });
+
+    // Sort by savings percentage (highest savings = rank 1)
+    const sortedLeaderboard = leaderboardData
+      .slice()
+      .sort((a: any, b: any) => b.savingsPct - a.savingsPct);
+
+    // Find user's rank
+    const userRank = sortedLeaderboard.findIndex(
+      (entry: any) => entry.number === userApartment.number
+    ) + 1;
+
     return {
-      energy: Math.max(0, Math.round(energySavings)),
-      water: 12,
-      rank: 3,
-      totalApartments: 45
+      energy: Math.max(0, Math.round(energySavings * 100) / 100),
+      water: Math.max(0, Math.round(waterSavings * 100) / 100),
+      rank: userRank,
+      totalApartments: sortedLeaderboard.length,
     };
   };
 
   const savings = calculateSavings();
 
-  // Show leaderboard if on that step
   if (step === "leaderboard") {
     return (
       <Leaderboard
         buildingId={buildingId}
         apartment={apartment}
+        userSubmission={meterData.electricity && meterData.water ? {
+          electricity: parseInt(meterData.electricity),
+          water: parseInt(meterData.water)
+        } : undefined}
         onBack={() => setStep("results")}
       />
     );
@@ -85,7 +141,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Card Container */}
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           {step === "onboarding" && (
             <form onSubmit={handleSubmit} className="p-8">
@@ -260,18 +315,17 @@ export default function Home() {
                 >
                   View Full Leaderboard
                 </button>
-                {<Link
-                href="/rewards"
-                className="w-full block mt-3 bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 text-center"
+                <Link
+                  href="/rewards"
+                  className="w-full block mt-3 bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 text-center"
                 >
-                View Community Rewards
-                </Link>}
+                  View Community Rewards
+                </Link>
               </div>
             </div>
           )}
         </div>
 
-        {/* Demo Note */}
         <div className="text-center mt-6 text-sm text-gray-600">
           <p>Khadra - Building Sustainability Platform</p>
         </div>
