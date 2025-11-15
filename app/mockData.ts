@@ -7,83 +7,80 @@ export const buildings = [
   { id: 3, name: "Sunset Residences" }
 ];
 
-// Apartments with initial readings
+// Enhanced apartment data with household factors
 export const apartments = [
   {
     number: "1001",
     buildingId: 1,
-    resident: "You",
-    lastReading: { electricity: 10250, water: 850 }
+    resident: "Omar",
+    householdSize: 5,
+    apartmentSqft: 1200,
+    hasElderly: false,
+    hasChildren: true,
+    lastReading: { electricity: 10250, water: 850 },
+    previousMonths: [
+      { electricity: 798, water: 1581 },
+      { electricity: 711, water: 1614 },
+      { electricity: 795, water: 1401 }
+    ]
   },
   {
     number: "1002",
     buildingId: 1,
-    resident: "Sam",
-    lastReading: { electricity: 10170, water: 900 }
+    resident: "Maha",
+    householdSize: 1,
+    apartmentSqft: 2000,
+    hasElderly: false,
+    hasChildren: false,
+    lastReading: { electricity: 10170, water: 900 },
+    previousMonths: [
+      { electricity: 652, water: 703 },
+      { electricity: 522, water: 685 },
+      { electricity: 498, water: 636 }
+    ]
   },
   {
     number: "1003",
     buildingId: 1,
-    resident: "Maha",
-    lastReading: { electricity: 10015, water: 760 }
-  },
-  {
-    number: "1501",
-    buildingId: 2,
-    resident: "Sara",
-    lastReading: { electricity: 9000, water: 1000 }
-  },
-  {
-    number: "210",
-    buildingId: 3,
     resident: "Fahad",
-    lastReading: { electricity: 7500, water: 450 }
-  }
-  // Add more apartments as needed for realistic competition!
-];
-
-// Pre-generated leaderboard entries for the demo
-export const leaderboard = [
-  // For Marina Tower (buildingId 1)
-  { number: "1002", resident: "Sam", consumption: 120, rank: 1, buildingId: 1 },
-  { number: "1003", resident: "Maha", consumption: 150, rank: 2, buildingId: 1 },
-  { number: "1001", resident: "You", consumption: 170, rank: 3, buildingId: 1 },
-  // Add more fake competitors to fill the leaderboard if needed
-  { number: "1004", resident: "Amit", consumption: 185, rank: 4, buildingId: 1 },
-  { number: "1005", resident: "Laila", consumption: 190, rank: 5, buildingId: 1 }
-];
-
-// Building-wide monthly reduction goals (for the progress bar/rewards)
-export const buildingGoals = [
+    householdSize: 2,
+    apartmentSqft: 2000,
+    hasElderly: false,
+    hasChildren: false,
+    lastReading: { electricity: 10015, water: 760 },
+    previousMonths: [
+      { electricity: 752, water: 979 },
+      { electricity: 653, water: 911 },
+      { electricity: 565, water: 879 }
+    ]
+  },
   {
+    number: "1004",
     buildingId: 1,
-    currentReduction: 4.2,  // Percentage reduction so far this month
-    targetReduction: 5.0    // Target percentage for reward
+    resident: "Sara",
+    householdSize: 2,
+    apartmentSqft: 1200,
+    hasElderly: false,
+    hasChildren: false,
+    lastReading: { electricity: 9850, water: 720 },
+    previousMonths: [
+      { electricity: 555, water: 945 },
+      { electricity: 528, water: 886 },
+      { electricity: 480, water: 847 }
+    ]
   },
   {
-    buildingId: 2,
-    currentReduction: 2.8,
-    targetReduction: 5.0
-  },
-  {
-    buildingId: 3,
-    currentReduction: 3.5,
-    targetReduction: 5.0
-  }
-];
-
-// Rewards (community and top performer)
-export const rewards = [
-  {
-    type: "Community",
-    description: "20% off at the Lobby Cafe",
-    unlockAt: 5, // Building must hit 5% reduction
-    unlocked: false
-  },
-  {
-    type: "Top Performer",
-    description: "Free Month of Valet Parking",
-    unlockAt: 1, // 1st place in leaderboard
-    unlocked: false
-  }
-];
+    number: "1005",
+    buildingId: 1,
+    resident: "Layla",
+    householdSize: 4,
+    apartmentSqft: 1500,
+    hasElderly: false,
+    hasChildren: false,
+    lastReading: { electricity: 9850, water: 720 },
+    previousMonths: [
+      { electricity: 555, water: 945 },
+      { electricity: 528, water: 886 },
+      { electricity: 480, water: 847 }
+    ]
+  }]

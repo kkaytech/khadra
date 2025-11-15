@@ -2,6 +2,14 @@
 
 import { rewards, buildingGoals } from "./mockData";
 import { useState } from "react";
+import {
+  calculatePersonalSavingsRate,
+  calculateNormalizedUsage,
+  calculateBuildingComparisonScore,
+  calculateDiscountPercentage,
+  generateAIInsights
+} from "./lib/aiEngine";
+
 
 // Optional: Accept buildingId and userRank as props or context for a multi-building app
 const buildingId = 1; // Hardcode or take from user state/context

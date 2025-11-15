@@ -1,6 +1,13 @@
 "use client";
 
 import { leaderboard, buildingGoals, rewards } from "./mockData";
+import {
+  calculatePersonalSavingsRate,
+  calculateNormalizedUsage,
+  calculateBuildingComparisonScore,
+  calculateDiscountPercentage,
+  generateAIInsights
+} from "./lib/aiEngine";
 
 interface LeaderboardProps {
   buildingId: number;
