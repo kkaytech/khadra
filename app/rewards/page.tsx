@@ -1,7 +1,9 @@
 "use client";
-
+import { useRouter } from "next/navigation";
 import { rewards, buildingGoals } from "../mockData";
 import { useState } from "react";
+
+
 
 
 // Optional: Accept buildingId and userRank as props or context for a multi-building app
@@ -9,6 +11,7 @@ const buildingId = 1; // Hardcode or take from user state/context
 
 export default function RewardsPage() {
   // Simulate progress for current building
+  const router = useRouter();
   const goal = buildingGoals.find((g: any) => g.buildingId === buildingId);
   const progress = goal ? goal.currentReduction : 0;
 
@@ -91,6 +94,15 @@ export default function RewardsPage() {
 
         <div className="mt-8 text-center text-sm text-gray-600">
           Keep submitting your readings and encourage neighbors to unlock more rewards!
+        </div>
+        <div className="mt-8 flex justify-center">
+          <button
+  onClick={() => router.back()}
+  className="mt-8 bg-gray-900 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors"
+>
+  ← Back
+</button>
+
         </div>
       </div>
     </div>
